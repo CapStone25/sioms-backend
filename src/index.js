@@ -46,7 +46,7 @@ app.get('/api/health', (req, res) => res.json({ status:'OK', message:'SIOMS API 
 app.use((req, res) => res.status(404).json({ message: `Route ${req.method} ${req.path} not found.` }));
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ message:'Internal server error.', error: process.env.NODE_ENV==='development' ? err.message : undefined });
+  res.status(500).json({ message:'Internal server error.', error: err.message, stack: process.env.NODE_ENV==='development' ? err.stack : undefined });
 });
 
 app.listen(PORT, async () => {
