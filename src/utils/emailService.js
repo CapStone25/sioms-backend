@@ -2,13 +2,17 @@ const nodemailer = require('nodemailer');
 
 function createTransport() {
   return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 10000,   // 10 seconds to connect
+    greetingTimeout: 10000,     // 10 seconds for greeting
+    socketTimeout: 15000,       // 15 seconds for socket
+    pool: true,                 // reuse connections (faster for bulk)
+    maxConnections: 5,          // up to 5 parallel SMTP connections
+    maxMessages: 100,           // messages per connection
   });
 }
 
@@ -121,4 +125,5 @@ function leaveStatusEmailHtml({ name, type, from_date, to_date, days, status, hr
 }
 
 module.exports = { sendEmail, credentialEmailHtml, registerRequestEmailHtml, verifyEmailHtml, leaveStatusEmailHtml };
+
 
